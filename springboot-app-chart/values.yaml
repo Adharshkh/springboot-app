@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: spring-app
-  pullPolicy: IfNotPresent
+  repository: 039033235676.dkr.ecr.us-east-2.amazonaws.com/spring-app-dev
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
@@ -69,7 +69,7 @@ resources: {}
 #   memory: 128Mi
 
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 2
   maxReplicas: 50
   targetCPUUtilizationPercentage: 50
