@@ -19,5 +19,4 @@ spec:
         name: cpu
         targetAverageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- end }}
 {{- end }}
