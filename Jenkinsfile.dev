@@ -1,9 +1,10 @@
 pipeline{
     agent any
     environment {
-	REPOSITORY = credentials('repository')
+	REPOSITORY = "039033235676.dkr.ecr.us-east-2.amazonaws.com"
         IMAGE = "spring-app-dev"
         TAG = "${BUILD_NUMBER}"
+        REGION = "us-east-2"
     }
 
     stages {
@@ -18,16 +19,24 @@ pipeline{
                 git branch: 'dev', url: 'https://github.com/Adharshkh/springboot-app.git/'
             }
         }
+        
+        stage('OWASP Dependency Checking') {
+            steps{
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'OWASP-Dependency-Check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
 
         stage("Docker Build & Push"){
             steps{
                 script{
-		            sh "sudo docker build -t ${IMAGE} ."
-                    sh "aws ecr get-login-password --region ${REGION} | sudo docker login --username AWS --password-stdin ${REPOSITORY}"
-                    sh "sudo docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:${TAG} "
-                    sh "sudo docker push ${REPOSITORY}/${IMAGE}:${TAG} "
-                    sh "sudo docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:latest "
-                    sh "sudo docker push ${REPOSITORY}/${IMAGE}:latest "
+                    sh "pwd"
+                    sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 039033235676.dkr.ecr.us-east-2.amazonaws.com"
+                    sh "docker build -t spring-app-dev ."
+                    sh "docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:${TAG} "
+                    sh "docker push ${REPOSITORY}/${IMAGE}:${TAG} "
+                    sh "docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:latest "
+                    sh "docker push ${REPOSITORY}/${IMAGE}:latest "
                 }
             }
         }
