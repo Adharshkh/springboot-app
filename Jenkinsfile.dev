@@ -5,6 +5,7 @@ pipeline{
         IMAGE = "spring-app-dev"
         TAG = "${BUILD_NUMBER}"
         REGION = "us-east-2"
+        SCANNER_HOME=tool 'sonar-scanner'
     }
 
     stages {
@@ -20,6 +21,15 @@ pipeline{
             }
         }
         
+        stage("Sonarqube Analysis "){
+            steps{
+                withSonarQubeEnv('sonar-server') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=spring-app \
+                    -Dsonar.projectKey=spring-app '''
+                }
+            }
+        }
+
         stage('OWASP Dependency Checking') {
             steps{
                 dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'OWASP-Dependency-Check'
