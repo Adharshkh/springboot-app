@@ -1,45 +1,57 @@
 pipeline{
     agent any
     environment {
-	REPOSITORY = credentials('repository')
+	REPOSITORY = "039033235676.dkr.ecr.us-east-2.amazonaws.com"
         IMAGE = "spring-app-prod"
         TAG = "${BUILD_NUMBER}"
+        REGION = "us-east-2"
     }
+
     stages {
         stage('clean workspace'){
             steps{
                 cleanWs()
             }
         }
+
         stage('Checkout from Git'){
             steps{
-                git branch: 'dev', url: 'https://github.com/Adharshkh/springboot-app.git/'
+                git branch: 'main', url: 'https://github.com/Adharshkh/springboot-app.git/'
+            }
+        }
+        
+        stage('OWASP Dependency Checking') {
+            steps{
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'OWASP-Dependency-Check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
 
         stage("Docker Build & Push"){
             steps{
                 script{
-		    sh "sudo docker build -t ${IMAGE} ."
-                    sh "aws ecr get-login-password --region ${REGION} | sudo docker login --username AWS --password-stdin ${REPOSITORY}"
-                    sh "sudo docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:${TAG} "
-                    sh "sudo docker push ${REPOSITORY}/${IMAGE}:${TAG} "
-                    sh "sudo docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:latest "
-                    sh "sudo docker push ${REPOSITORY}/${IMAGE}:latest "
+                    sh "pwd"
+                    sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 039033235676.dkr.ecr.us-east-2.amazonaws.com"
+                    sh "docker build -t spring-app-prod ."
+                    sh "docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:${TAG} "
+                    sh "docker push ${REPOSITORY}/${IMAGE}:${TAG} "
+                    sh "docker tag ${IMAGE} ${REPOSITORY}/${IMAGE}:latest "
+                    sh "docker push ${REPOSITORY}/${IMAGE}:latest "
                 }
             }
         }
+
         stage('Install trivy'){
             steps{
                 sh "wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb"
                 sh "sudo dpkg -i trivy_0.18.3_Linux-64bit.deb"
             }
         }
+
         stage(' Trivy Scan') {
             steps {
                 // Scan again and fail on CRITICAL vulns
                 sh 'sudo trivy image ${REPOSITORY}/${IMAGE}:latest'
-
             }
         }
     }
