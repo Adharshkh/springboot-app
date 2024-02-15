@@ -6,6 +6,7 @@ pipeline{
         TAG = "${BUILD_NUMBER}"
         REGION = "us-east-2"
         SCANNER_HOME=tool 'sonar-scanner'
+        TRIVY_PASSWORD = credentials('user-passwd')
     }
 
     stages {
@@ -29,7 +30,7 @@ pipeline{
                 }
             }
         }
-
+        
         stage('OWASP Dependency Checking') {
             steps{
                 dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'OWASP-Dependency-Check'
@@ -54,14 +55,14 @@ pipeline{
         stage('Install trivy'){
             steps{
                 sh "wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb"
-                sh "sudo dpkg -i trivy_0.18.3_Linux-64bit.deb"
+                sh "echo ${TRIVY_PASSWORD} | sudo -S dpkg -i trivy_0.18.3_Linux-64bit.deb"
             }
         }
 
         stage(' Trivy Scan') {
             steps {
                 // Scan again and fail on CRITICAL vulns
-                sh 'sudo trivy image ${REPOSITORY}/${IMAGE}:latest'
+                sh "echo ${TRIVY_PASSWORD} | sudo -S trivy image ${REPOSITORY}/${IMAGE}:latest"
             }
         }
     }
