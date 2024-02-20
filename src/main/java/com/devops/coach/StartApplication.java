@@ -13,7 +13,7 @@ public class StartApplication {
     @GetMapping("/")
     public String index(final Model model) {
         model.addAttribute("title", "Test SpringBoot Deployment using Helm");
-        model.addAttribute("msg", "Hello All..We are testing springboot application deployment with Helm and Jenkins Pipeline!!!! testing ");
+        model.addAttribute("msg", "Hello All..We are testing springboot application deployment with Helm and Jenkins Pipeline!!!! testing testing ");
         return "index";
     }
 
