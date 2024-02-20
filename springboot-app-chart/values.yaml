@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: 039033235676.dkr.ecr.us-east-2.amazonaws.com/spring-app-dev
+  repository: docker pull adharshkh/spring-app-dev
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
