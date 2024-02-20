@@ -4,5 +4,5 @@ helm:
     value: adharshkh/spring-app-dev
     forcestring: true
   - name: image.tag
-    value: "29"
+    value: "30"
     forcestring: true
