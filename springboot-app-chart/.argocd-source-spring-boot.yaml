@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: image.name
+    value: adharshkh/spring-app-dev
+    forcestring: true
+  - name: image.tag
+    value: "33"
+    forcestring: true
