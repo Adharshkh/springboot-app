@@ -50,6 +50,7 @@ pipeline{
                     sh "docker push ${REPOSITORY}/${IMAGE}:latest "
                 }
             }
+
         }
 
         stage('Install trivy'){
@@ -63,6 +64,44 @@ pipeline{
             steps {
                 // Scan again and fail on CRITICAL vulns
                 sh "echo ${TRIVY_PASSWORD} | sudo -S trivy image ${REPOSITORY}/${IMAGE}:latest"
+
+            }
+        }
+        stage('Cloning Git repo of helm template') {
+            steps {
+                 
+                 dir ('~/workspace/springboot-app-2/helm-template'){
+                    git branch: 'dev', url: 'https://github.com/Adharshkh/springboot-app-2.git'
+            }
+          }        
+        }
+
+        stage('Update Helm Chart Image Tag') {
+            steps {
+                script {
+
+                    // Print the working directory
+                    sh 'pwd'
+
+                    // List files in the current directory
+                    sh 'ls'
+
+                    def helmChartPath = '/var/lib/jenkins/workspace/build-pipeline-2'  // Path to your Helm Chart folder in the Git repo
+                    def valuesFilePath = "${helmChartPath}/springboot-app-chart/values.yaml"
+                    
+                    // Replace the image tag in the values.yaml file
+                    sh "sed -i 's/tag:.*/tag: ${TAG}/' ${valuesFilePath}"
+                    
+                    // Configure Git to use provided credentials
+                    withCredentials([usernamePassword(credentialsId: 'springboot-app-2', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        sh "git -C ${helmChartPath} config --local credential.helper '!f() { echo username=${GIT_USERNAME}; echo password=${GIT_PASSWORD}; }; f'"
+                        sh "git -C ${helmChartPath} add ${valuesFilePath}"
+                        sh "git -C ${helmChartPath} commit -m 'Update image tag'"
+                    
+                    // Push the merged changes
+                    sh "git -C ${helmChartPath} push origin HEAD:main"
+                    }
+                }
             }
         }
     }
