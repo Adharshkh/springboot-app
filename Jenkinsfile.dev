@@ -67,14 +67,6 @@ pipeline{
 
             }
         }
-        stage('Cloning Git repo of helm template') {
-            steps {
-                 
-                 dir ('~/workspace/springboot-app-2/helm-template'){
-                    git branch: 'dev', url: 'https://github.com/Adharshkh/springboot-app-2.git'
-            }
-          }        
-        }
 
         stage('Update Helm Chart Image Tag') {
             steps {
