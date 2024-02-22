@@ -8,7 +8,7 @@ image:
   repository: 039033235676.dkr.ecr.us-east-2.amazonaws.com/spring-app-dev
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 55
+  tag: 56
 
 imagePullSecrets: []
 nameOverride: ""
