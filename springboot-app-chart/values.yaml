@@ -46,17 +46,12 @@ ingress:
   annotations: 
    kubernetes.io/ingress.class: alb
    alb.ingress.kubernetes.io/scheme: internet-facing
-   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+   # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   hosts:
   - host: thriftydaddy.online
     paths:
     - path: /
       pathType: ImplementationSpecific
-      backend:
-        service:
-          name: app-1-springboot-app-service
-          port:
-            number: 80
   tls: []
   #  - secretName: chart-example-tls
 #    hosts:
