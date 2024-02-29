@@ -39,7 +39,6 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
-  targetPort: 8080
 
 ingress:
   enabled: true
@@ -53,6 +52,11 @@ ingress:
     paths:
     - path: /
       pathType: ImplementationSpecific
+      backend:
+        service:
+          name: app-1-springboot-app-service
+          port:
+            number: 80
   tls: []
   #  - secretName: chart-example-tls
 #    hosts:
