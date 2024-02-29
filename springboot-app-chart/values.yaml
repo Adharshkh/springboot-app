@@ -53,6 +53,14 @@ ingress:
     paths:
     - path: /
       pathType: ImplementationSpecific
+    - path: /argocd
+      pathType: Prefix
+      backend:
+        service:
+          name : argocd-server
+          namespace: argocd
+          port:
+            number: 80
   tls: []
   #  - secretName: chart-example-tls
 #    hosts:
