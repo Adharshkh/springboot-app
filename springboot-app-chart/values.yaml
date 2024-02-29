@@ -45,8 +45,10 @@ ingress:
   className: ""
   annotations: 
    kubernetes.io/ingress.class: alb
-   alb.ingress.kubernetes.io/scheme: internet-facing
-   alb.ingress.kubernetes.io/listen-ports: '[ {"HTTP": 80}]'
+   # kubernetes.io/tls-acme: "true"
+   # kubernetes.io/ingress.class: alb
+   # alb.ingress.kubernetes.io/scheme: internet-facing
+   # alb.ingress.kubernetes.io/listen-ports: '[ {"HTTP": 80}]'
   hosts:
   - host: thriftydaddy.online
     paths:
