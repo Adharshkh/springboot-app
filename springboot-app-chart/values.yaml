@@ -37,17 +37,17 @@ securityContext: {}
 # runAsUser: 1000
 
 service:
-  type: ClusterIP
+  type: LoadBalncer
   port: 80
 
 ingress:
-  enabled: true
+  enabled: false
   className: "alb"
-  annotations: {
+  annotations: 
    kubernetes.io/ingress.class: alb,
    alb.ingress.kubernetes.io/scheme: internet-facing,
    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-   }
+   
   hosts:
   - host: thriftydaddy.online
     paths:
