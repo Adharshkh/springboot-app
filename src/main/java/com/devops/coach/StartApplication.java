@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class StartApplication {
 
-    @GetMapping("/")
+    @GetMapping("/app1")
     public String index(final Model model) {
         model.addAttribute("title", "Test SpringBoot Deployment using Helm");
         model.addAttribute("msg", "Hello All..We are testing springboot application deployment with Helm and Jenkins Pipeline!!!! test1 ");
